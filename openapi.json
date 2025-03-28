@@ -2,8 +2,8 @@ openapi: 3.0.0
 info:
   title: Cardexscan APIs
   description: >-
-    API Documentation for CDS Public. MIT Licensed. Subjected to personal use. NOT FOR
-    COMMERCIAL.
+    API Documentation for CDS Public. MIT Licensed. Subjected to personal use. Rate limiting is in effect.
+    For Commercial Use, Connect with CDS Team.
   version: 1.0.1
 servers:
   - url: https://cardexscan.com
