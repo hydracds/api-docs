@@ -2,9 +2,9 @@ openapi: 3.0.0
 info:
   title: Cardexscan APIs
   description: >-
-    API Doc for CDS Public. MIT Licensed. Subjected to personal use. NOT FOR
+    API Documentation for CDS Public. MIT Licensed. Subjected to personal use. NOT FOR
     COMMERCIAL.
-  version: 1.0.0
+  version: 1.0.1
 servers:
   - url: https://cardexscan.com
 components:
@@ -16,86 +16,23 @@ paths:
   /api/cds/swap/aggregate:
     post:
       tags:
-        - default
-      summary: Get Swaps
+        - API Endpoints
+      summary: Get Aggregated Swaps Data
       requestBody:
         content:
-          '*/*':
+          application/json:
             schema:
-              type: string
-              example: >-
-                "{\r\n    \"tokenInAmount\": 1915,\r\n    \"slippage\":
-                1,\r\n    \"tokenIn\": \"lovelace\",\r\n    \"tokenOut\":
-                {\r\n        \"policyId\":
-                \"5deab590a137066fef0e56f06ef1b830f21bc5d544661ba570bdd2ae\",\r\n       
-                \"nameHex\": \"424f44454741\",\r\n        \"decimals\":
-                6,\r\n        \"verified\": true,\r\n        \"ticker\":
-                \"BODEGA\"\r\n    },\r\n    \"blacklisted_dexes\": [\r\n       
-                \"CERRA\",\r\n        \"GENIUS\",\r\n       
-                \"TEDDYSWAP\",\r\n        \"SPECTRUM\"\r\n    ]\r\n}"
+              type: object
+              description: Stringified JSON object
+              example: {"tokenInAmount":100,"tokenIn":"lovelace","tokenOut":{"policyId":"4128947ee2e2e983c8710d6ddeb1f90ad8f3b843650d13045f13b9e9","nameHex":"4361726465787363616e","decimals":0,"verified":true,"ticker":"CDS"},"blacklisted_dexes":["CERRA","GENIUS","TEDDYSWAP","SPECTRUM"]}
       security:
         - noauthAuth: []
       parameters:
-        - name: accept
-          in: header
-          schema:
-            type: string
-          example: '*/*'
-        - name: accept-language
-          in: header
-          schema:
-            type: string
-          example: en-US,en;q=0.5
         - name: content-type
           in: header
           schema:
             type: string
           example: application/json
-        - name: origin
-          in: header
-          schema:
-            type: string
-          example: https://cardexscan.com
-        - name: priority
-          in: header
-          schema:
-            type: string
-          example: u=1, i
-        - name: sec-ch-ua
-          in: header
-          schema:
-            type: string
-          example: '"Not A(Brand";v="8", "Chromium";v="132", "Brave";v="132"'
-        - name: sec-ch-ua-mobile
-          in: header
-          schema:
-            type: string
-          example: '?0'
-        - name: sec-ch-ua-platform
-          in: header
-          schema:
-            type: string
-          example: '"Windows"'
-        - name: sec-fetch-dest
-          in: header
-          schema:
-            type: string
-          example: empty
-        - name: sec-fetch-mode
-          in: header
-          schema:
-            type: string
-          example: cors
-        - name: sec-fetch-site
-          in: header
-          schema:
-            type: string
-          example: same-origin
-        - name: sec-gpc
-          in: header
-          schema:
-            type: integer
-          example: '1'
         - name: x-api-key
           in: header
           schema:
@@ -109,105 +46,21 @@ paths:
   /api/cds/swap/cbor/build:
     post:
       tags:
-        - default
-      summary: Get Swap Unsigned Tx CBOR
+        - API Endpoints
+      summary: Get Aggregated Swap Unsigned Tx CBOR
       requestBody:
         content:
-          '*/*':
+          application/json:
             schema:
-              type: string
-              example: >-
-                "{\r\n    \"tokenInAmount\": 5,\r\n    \"slippage\": 1,\r\n   
-                \"tokenIn\": \"lovelace\",\r\n    \"tokenOut\": {\r\n       
-                \"policyId\":
-                \"279c909f348e533da5808898f87f9a14bb2c3dfbbacccd631d927a3f\",\r\n       
-                \"nameHex\": \"534e454b\",\r\n        \"decimals\":
-                0,\r\n        \"verified\": true,\r\n        \"ticker\":
-                \"SNEK\"\r\n    },\r\n    \"blacklisted_dexes\": [\r\n       
-                \"CERRA\",\r\n        \"GENIUS\",\r\n       
-                \"TEDDYSWAP\",\r\n        \"SPECTRUM\"\r\n    ],\r\n   
-                \"userAddress\":
-                \"addr1qx2u9j732u24pzdgr7kv5s3mra5hldzgq6spgjclp02urdfsl0pf0vqz942h3gru5cudxjajqme6h886gpg5jdftzcyqqkjcj3\"\r\n}"
+              type: object
+              description: Stringified JSON object
+              example: {"tokenInAmount":100,"tokenIn":"lovelace","tokenOut":{"policyId":"4128947ee2e2e983c8710d6ddeb1f90ad8f3b843650d13045f13b9e9","nameHex":"4361726465787363616e","decimals":0,"verified":true,"ticker":"CDS"},"blacklisted_dexes":["CERRA","GENIUS","TEDDYSWAP","SPECTRUM"]}
       parameters:
-        - name: accept
-          in: header
-          schema:
-            type: string
-          example: '*/*'
-        - name: accept-language
-          in: header
-          schema:
-            type: string
-          example: en-US,en;q=0.5
         - name: content-type
           in: header
           schema:
             type: string
           example: application/json
-        - name: cookie
-          in: header
-          schema:
-            type: string
-          example: >-
-            cf_clearance=2GgKzaJ.ekQh90gpsemgdu2kXEZ77vj3BHdSE0qOqAw-1737113964-1.2.1.1-jlAugWdwmMY.MrPQchTF8sEbWAjZ3aQoYwzh0Chbt94o1Kt1WgQ0g0wML7vgH1Bz2svxlcNxxDFNj3o.N1t3H.AbVOXDZhbpMYJsrcVCk4xRA8xxtK603dy7NwzpDpPb9v2BB2_woPTlkd0mEImdFt5WfY7rJMecNLBgnebz1OdX_W75b3DVey5UEih2DTvPG0OaWH2ZyNWZ0oKQ_1bqYFpPcbhdrNn8rkAzMpSUBcIQKEixthzhTFezjk6whH8XnqqZCcVU5dUWz_ZcXVmcpMpmsDdroHDhMSkSdbH9ic0
-        - name: origin
-          in: header
-          schema:
-            type: string
-          example: https://cardexscan.com
-        - name: priority
-          in: header
-          schema:
-            type: string
-          example: u=1, i
-        - name: referer
-          in: header
-          schema:
-            type: string
-          example: >-
-            https://cardexscan.com/swap?tokenIn=&tokenOut=e0bd3c6eb380c4e5ba95c333afc2523cdd541772bc87a011f32c3cc1.506f6e7a6f20
-        - name: sec-ch-ua
-          in: header
-          schema:
-            type: string
-          example: '"Not A(Brand";v="8", "Chromium";v="132", "Brave";v="132"'
-        - name: sec-ch-ua-mobile
-          in: header
-          schema:
-            type: string
-          example: '?0'
-        - name: sec-ch-ua-platform
-          in: header
-          schema:
-            type: string
-          example: '"Windows"'
-        - name: sec-fetch-dest
-          in: header
-          schema:
-            type: string
-          example: empty
-        - name: sec-fetch-mode
-          in: header
-          schema:
-            type: string
-          example: cors
-        - name: sec-fetch-site
-          in: header
-          schema:
-            type: string
-          example: same-origin
-        - name: sec-gpc
-          in: header
-          schema:
-            type: integer
-          example: '1'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-          example: >-
-            Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
-            like Gecko) Chrome/132.0.0.0 Safari/537.36
         - name: x-api-key
           in: header
           schema:
@@ -221,96 +74,10 @@ paths:
   /api/orders:
     get:
       tags:
-        - default
+        - API Endpoints
       summary: Get Order History
-      description: "Generated from cURL: curl 'https://cardexscan.com/api/wallet/orders?address=addr1q8yx3zhvwv7ehxx9ma5f0h49wc2k56ptswamvzxduv875fn7vxlum3yvsmsjjvlghntrc3m0nrhw7jqk0hfa9ggzgq7qdrw6uq' \\\r\n  -H 'accept: */*' \\\r\n  -H 'accept-language: en-US,en;q=0.9' \\\r\n  -H 'baggage: sentry-environment=production,sentry-release=ce625b6d5ca563166343a261b76586a0dd74acd1,sentry-public_key=6e64a691a30bf7ae0830421f1be6b96d,sentry-trace_id=a8ef0576094d4a0db8b44241d8044af1,sentry-sample_rate=1,sentry-transaction=%2Forders%2F,sentry-sampled=true' \\\r\n  -H 'cookie: _ga=GA1.1.507196429.1738083382; _ga_4NJCGCEZ3G=GS1.1.1739297429.56.1.1739297592.0.0.0; cf_clearance=XhUs9r.ALnTKv2ymsMVKFWqck.ivVvX1lLa7d_7Q5Qg-1739297595-1.2.1.1-PkZqif8fHPc5xk.RCOpD_m2rvchIpEBWADdbCpKo7xB7AnwJO6VYoI0eTlQQEZMOYZdE5LCOXxEMVlvHKvopZ_UIzybpViIO_ZNzyJOZDpIxgvG.6lACxNijrND7kKDovLVfPSwmoXzPxBz4ZHGicHBr33RM.AMBzbaaHEdxFtTFKvwUo65gRipqzvYx2H.k.4.YsffruPpZbq4KQYY3eQGyT44xNQzG04x7wGbsqaP.8D55uNcG1jJgFuXJgH1MLcuidYE9UT7PaqZHOmqPv9hDhTGb3fOES.2AFZcBDtA' \\\r\n  -H 'if-none-match: W/\"a2a5-FY5HRtgHiVEsMpOR/JO49HLtt3Y\"' \\\r\n  -H 'priority: u=1, i' \\\r\n  -H 'referer: https://cardexscan.com/orders' \\\r\n  -H 'sec-ch-ua: \"Not A(Brand\";v=\"8\", \"Chromium\";v=\"132\", \"Brave\";v=\"132\"' \\\r\n  -H 'sec-ch-ua-mobile: ?0' \\\r\n  -H 'sec-ch-ua-platform: \"Windows\"' \\\r\n  -H 'sec-fetch-dest: empty' \\\r\n  -H 'sec-fetch-mode: cors' \\\r\n  -H 'sec-fetch-site: same-origin' \\\r\n  -H 'sec-gpc: 1' \\\r\n  -H 'sentry-trace: a8ef0576094d4a0db8b44241d8044af1-91d4bb25f489fa5b-1' \\\r\n  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36'"
+      description: "Get all historical trades"
       parameters:
-        - name: accept
-          in: header
-          schema:
-            type: string
-          example: '*/*'
-        - name: accept-language
-          in: header
-          schema:
-            type: string
-          example: en-US,en;q=0.9
-        - name: baggage
-          in: header
-          schema:
-            type: string
-          example: >-
-            sentry-environment=production,sentry-release=ce625b6d5ca563166343a261b76586a0dd74acd1,sentry-public_key=6e64a691a30bf7ae0830421f1be6b96d,sentry-trace_id=a8ef0576094d4a0db8b44241d8044af1,sentry-sample_rate=1,sentry-transaction=%2Forders%2F,sentry-sampled=true
-        - name: cookie
-          in: header
-          schema:
-            type: string
-          example: >-
-            _ga=GA1.1.507196429.1738083382;
-            _ga_4NJCGCEZ3G=GS1.1.1739297429.56.1.1739297592.0.0.0;
-            cf_clearance=XhUs9r.ALnTKv2ymsMVKFWqck.ivVvX1lLa7d_7Q5Qg-1739297595-1.2.1.1-PkZqif8fHPc5xk.RCOpD_m2rvchIpEBWADdbCpKo7xB7AnwJO6VYoI0eTlQQEZMOYZdE5LCOXxEMVlvHKvopZ_UIzybpViIO_ZNzyJOZDpIxgvG.6lACxNijrND7kKDovLVfPSwmoXzPxBz4ZHGicHBr33RM.AMBzbaaHEdxFtTFKvwUo65gRipqzvYx2H.k.4.YsffruPpZbq4KQYY3eQGyT44xNQzG04x7wGbsqaP.8D55uNcG1jJgFuXJgH1MLcuidYE9UT7PaqZHOmqPv9hDhTGb3fOES.2AFZcBDtA
-        - name: if-none-match
-          in: header
-          schema:
-            type: string
-          example: W/"a2a5-FY5HRtgHiVEsMpOR/JO49HLtt3Y"
-        - name: priority
-          in: header
-          schema:
-            type: string
-          example: u=1, i
-        - name: referer
-          in: header
-          schema:
-            type: string
-          example: https://cardexscan.com/orders
-        - name: sec-ch-ua
-          in: header
-          schema:
-            type: string
-          example: '"Not A(Brand";v="8", "Chromium";v="132", "Brave";v="132"'
-        - name: sec-ch-ua-mobile
-          in: header
-          schema:
-            type: string
-          example: '?0'
-        - name: sec-ch-ua-platform
-          in: header
-          schema:
-            type: string
-          example: '"Windows"'
-        - name: sec-fetch-dest
-          in: header
-          schema:
-            type: string
-          example: empty
-        - name: sec-fetch-mode
-          in: header
-          schema:
-            type: string
-          example: cors
-        - name: sec-fetch-site
-          in: header
-          schema:
-            type: string
-          example: same-origin
-        - name: sec-gpc
-          in: header
-          schema:
-            type: integer
-          example: '1'
-        - name: sentry-trace
-          in: header
-          schema:
-            type: string
-          example: a8ef0576094d4a0db8b44241d8044af1-91d4bb25f489fa5b-1
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-          example: >-
-            Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
-            like Gecko) Chrome/132.0.0.0 Safari/537.36
         - name: x-api-key
           in: header
           schema:
@@ -330,96 +97,10 @@ paths:
   /api/token/trades/all:
     get:
       tags:
-        - default
+        - API Endpoints
       summary: Get All Token Trades
-      description: "Generated from cURL: curl 'https://cardexscan.com/api/wallet/orders?address=addr1q8yx3zhvwv7ehxx9ma5f0h49wc2k56ptswamvzxduv875fn7vxlum3yvsmsjjvlghntrc3m0nrhw7jqk0hfa9ggzgq7qdrw6uq' \\\r\n  -H 'accept: */*' \\\r\n  -H 'accept-language: en-US,en;q=0.9' \\\r\n  -H 'baggage: sentry-environment=production,sentry-release=ce625b6d5ca563166343a261b76586a0dd74acd1,sentry-public_key=6e64a691a30bf7ae0830421f1be6b96d,sentry-trace_id=a8ef0576094d4a0db8b44241d8044af1,sentry-sample_rate=1,sentry-transaction=%2Forders%2F,sentry-sampled=true' \\\r\n  -H 'cookie: _ga=GA1.1.507196429.1738083382; _ga_4NJCGCEZ3G=GS1.1.1739297429.56.1.1739297592.0.0.0; cf_clearance=XhUs9r.ALnTKv2ymsMVKFWqck.ivVvX1lLa7d_7Q5Qg-1739297595-1.2.1.1-PkZqif8fHPc5xk.RCOpD_m2rvchIpEBWADdbCpKo7xB7AnwJO6VYoI0eTlQQEZMOYZdE5LCOXxEMVlvHKvopZ_UIzybpViIO_ZNzyJOZDpIxgvG.6lACxNijrND7kKDovLVfPSwmoXzPxBz4ZHGicHBr33RM.AMBzbaaHEdxFtTFKvwUo65gRipqzvYx2H.k.4.YsffruPpZbq4KQYY3eQGyT44xNQzG04x7wGbsqaP.8D55uNcG1jJgFuXJgH1MLcuidYE9UT7PaqZHOmqPv9hDhTGb3fOES.2AFZcBDtA' \\\r\n  -H 'if-none-match: W/\"a2a5-FY5HRtgHiVEsMpOR/JO49HLtt3Y\"' \\\r\n  -H 'priority: u=1, i' \\\r\n  -H 'referer: https://cardexscan.com/orders' \\\r\n  -H 'sec-ch-ua: \"Not A(Brand\";v=\"8\", \"Chromium\";v=\"132\", \"Brave\";v=\"132\"' \\\r\n  -H 'sec-ch-ua-mobile: ?0' \\\r\n  -H 'sec-ch-ua-platform: \"Windows\"' \\\r\n  -H 'sec-fetch-dest: empty' \\\r\n  -H 'sec-fetch-mode: cors' \\\r\n  -H 'sec-fetch-site: same-origin' \\\r\n  -H 'sec-gpc: 1' \\\r\n  -H 'sentry-trace: a8ef0576094d4a0db8b44241d8044af1-91d4bb25f489fa5b-1' \\\r\n  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36'"
+      description: "Get all token trades"
       parameters:
-        - name: accept
-          in: header
-          schema:
-            type: string
-          example: '*/*'
-        - name: accept-language
-          in: header
-          schema:
-            type: string
-          example: en-US,en;q=0.9
-        - name: baggage
-          in: header
-          schema:
-            type: string
-          example: >-
-            sentry-environment=production,sentry-release=ce625b6d5ca563166343a261b76586a0dd74acd1,sentry-public_key=6e64a691a30bf7ae0830421f1be6b96d,sentry-trace_id=a8ef0576094d4a0db8b44241d8044af1,sentry-sample_rate=1,sentry-transaction=%2Forders%2F,sentry-sampled=true
-        - name: cookie
-          in: header
-          schema:
-            type: string
-          example: >-
-            _ga=GA1.1.507196429.1738083382;
-            _ga_4NJCGCEZ3G=GS1.1.1739297429.56.1.1739297592.0.0.0;
-            cf_clearance=XhUs9r.ALnTKv2ymsMVKFWqck.ivVvX1lLa7d_7Q5Qg-1739297595-1.2.1.1-PkZqif8fHPc5xk.RCOpD_m2rvchIpEBWADdbCpKo7xB7AnwJO6VYoI0eTlQQEZMOYZdE5LCOXxEMVlvHKvopZ_UIzybpViIO_ZNzyJOZDpIxgvG.6lACxNijrND7kKDovLVfPSwmoXzPxBz4ZHGicHBr33RM.AMBzbaaHEdxFtTFKvwUo65gRipqzvYx2H.k.4.YsffruPpZbq4KQYY3eQGyT44xNQzG04x7wGbsqaP.8D55uNcG1jJgFuXJgH1MLcuidYE9UT7PaqZHOmqPv9hDhTGb3fOES.2AFZcBDtA
-        - name: if-none-match
-          in: header
-          schema:
-            type: string
-          example: W/"a2a5-FY5HRtgHiVEsMpOR/JO49HLtt3Y"
-        - name: priority
-          in: header
-          schema:
-            type: string
-          example: u=1, i
-        - name: referer
-          in: header
-          schema:
-            type: string
-          example: https://cardexscan.com/orders
-        - name: sec-ch-ua
-          in: header
-          schema:
-            type: string
-          example: '"Not A(Brand";v="8", "Chromium";v="132", "Brave";v="132"'
-        - name: sec-ch-ua-mobile
-          in: header
-          schema:
-            type: string
-          example: '?0'
-        - name: sec-ch-ua-platform
-          in: header
-          schema:
-            type: string
-          example: '"Windows"'
-        - name: sec-fetch-dest
-          in: header
-          schema:
-            type: string
-          example: empty
-        - name: sec-fetch-mode
-          in: header
-          schema:
-            type: string
-          example: cors
-        - name: sec-fetch-site
-          in: header
-          schema:
-            type: string
-          example: same-origin
-        - name: sec-gpc
-          in: header
-          schema:
-            type: integer
-          example: '1'
-        - name: sentry-trace
-          in: header
-          schema:
-            type: string
-          example: a8ef0576094d4a0db8b44241d8044af1-91d4bb25f489fa5b-1
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-          example: >-
-            Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
-            like Gecko) Chrome/132.0.0.0 Safari/537.36
         - name: x-api-key
           in: header
           schema:
