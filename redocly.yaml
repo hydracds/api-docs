@@ -1,0 +1,9 @@
+theme:
+  title: "Cardexscan API Documentation"
+  openapi:
+    theme:
+      colors:
+        primary:
+          main: "#FF6B42"  # Brand color
+    labels:
+      default: "API Endpoints"        # Replaces "Example"
