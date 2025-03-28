@@ -16,7 +16,7 @@ paths:
   /api/cds/swap/aggregate:
     post:
       tags:
-        - API Endpoints
+        - Swaps
       summary: Get Aggregated Swaps Data
       requestBody:
         content:
@@ -67,7 +67,7 @@ paths:
   /api/cds/swap/cbor/build:
     post:
       tags:
-        - API Endpoints
+        - Swaps
       summary: Get Aggregated Swap Unsigned Tx CBOR
       requestBody:
         content:
@@ -117,7 +117,7 @@ paths:
   /api/orders:
     get:
       tags:
-        - API Endpoints
+        - Tokens
       summary: Get Order History
       description: "Get all historical trades"
       parameters:
@@ -137,10 +137,37 @@ paths:
           description: Successful response
           content:
             application/json: {}
+  /api/tokens/trending:
+    get:
+      tags:
+        - Tokens
+      summary: Get Trending Tokens
+      description: "Get all trending tokens"
+      parameters:
+        - name: timeframe
+          in: query
+          schema:
+            type: string
+          example: 1 day
+        - name: count
+          in: query
+          schema:
+            type: integer
+          example: '50'
+        - name: x-api-key
+          in: header
+          schema:
+            type: string
+          example: 7c6095cf2eeeac500667241439ab5c3eac2488b9962526ca7f543d76b56a7b2
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
   /api/token/trades/all:
     get:
       tags:
-        - API Endpoints
+        - Tokens
       summary: Get All Token Trades
       description: "Get all token trades"
       parameters:
