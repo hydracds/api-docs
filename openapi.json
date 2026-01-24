@@ -196,3 +196,365 @@ paths:
           description: Successful response
           content:
             application/json: {}
+  /api/otc/offers/create:
+    post:
+      tags:
+        - P2P marketplace
+      summary: Create P2P Offer
+      description: "Create new P2P offer for trading assets"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - walletAddress
+                - offerAmount
+                - requestAmount
+              properties:
+                walletAddress:
+                  type: string
+                  description: User's wallet address (required)
+                offerAsset:
+                  type: object
+                  description: Asset being offered (defaults to ADA/lovelace)
+                  properties:
+                    policyId:
+                      type: string
+                    nameHex:
+                      type: string
+                    decimals:
+                      type: integer
+                    ticker:
+                      type: string
+                offerAmount:
+                  type: number
+                  description: Amount of the offer asset
+                requestAsset:
+                  type: object
+                  description: Asset being requested (defaults to ADA/lovelace)
+                  properties:
+                    policyId:
+                      type: string
+                    nameHex:
+                      type: string
+                    decimals:
+                      type: integer
+                    ticker:
+                      type: string
+                requestAmount:
+                  type: number
+                  description: Amount of the requested asset
+                allowPartial:
+                  type: boolean
+                  description: Allow partial fills (defaults to false)
+                minTakeAmount:
+                  type: number
+                  description: Minimum amount for partial takes (defaults to offerAmount)
+                expirationHours:
+                  type: integer
+                  description: Hours until offer expires (0 = no expiration)
+              example:
+                walletAddress: "addr1qx2u9j732u24pzdgr7kv5s3mra5hldzgq6spgjclp02urdfsl0pf0vqz942h3gru5cudxjajqme6h886gpg5jdftzcyqqkjcj3"
+                offerAsset:
+                  policyId: "279c909f348e533da5808898f87f9a14bb2c3dfbbacccd631d927a3f"
+                  nameHex: "534e454b"
+                  decimals: 0
+                  ticker: "SNEK"
+                offerAmount: 1000
+                requestAsset: "lovelace"
+                requestAmount: 5000000
+                allowPartial: true
+                minTakeAmount: 100
+                expirationHours: 24
+      parameters:
+        - name: content-type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: x-api-key
+          in: header
+          schema:
+            type: string
+          example: 7c6095cf2eeeac500667241439ab5c3eac2488b9962526ca7f543d76b56a7b2
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: true
+                  data:
+                    txCbor: "84a500d90102..."
+                    offerId: "offer_123abc"
+        '400':
+          description: Bad request - Missing required fields
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: false
+                  error: "Wallet address is required"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: false
+                  error: "Failed to create offer"
+  /api/otc/offers/fill:
+    post:
+      tags:
+        - P2P marketplace
+      summary: Fill P2P Offer
+      description: "Fully fill/Accept an existing P2P offer"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - walletAddress
+                - offerId
+              properties:
+                walletAddress:
+                  type: string
+                  description: User's wallet address (required)
+                offerId:
+                  type: string
+                  description: ID of the offer to fill (required)
+              example:
+                walletAddress: "addr1qx2u9j732u24pzdgr7kv5s3mra5hldzgq6spgjclp02urdfsl0pf0vqz942h3gru5cudxjajqme6h886gpg5jdftzcyqqkjcj3"
+                offerId: "offer_123abc"
+      parameters:
+        - name: content-type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: x-api-key
+          in: header
+          schema:
+            type: string
+          example: 7c6095cf2eeeac500667241439ab5c3eac2488b9962526ca7f543d76b56a7b2
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: true
+                  data:
+                    txCbor: "84a500d90102..."
+        '400':
+          description: Bad request - Missing required fields
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: false
+                  error: "Wallet address is required"
+        '404':
+          description: Offer not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: false
+                  error: "Offer not found"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: false
+                  error: "Failed to fill offer"
+  /api/otc/offers:
+    get:
+      tags:
+        - P2P marketplace
+      summary: Get P2P Offers
+      description: "Fetch all P2P offers"
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+          description: Filter offers by status (e.g., 'all', 'open', 'filled', 'cancelled')
+          example: all
+        - name: x-api-key
+          in: header
+          schema:
+            type: string
+          example: 7c6095cf2eeeac500667241439ab5c3eac2488b9962526ca7f543d76b56a7b2
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: true
+                  data:
+                    - id: "offer_123abc"
+                      offerAsset:
+                        policyId: "279c909f348e533da5808898f87f9a14bb2c3dfbbacccd631d927a3f"
+                        nameHex: "534e454b"
+                        ticker: "SNEK"
+                      offerAmount: 1000
+                      requestAsset: "lovelace"
+                      requestAmount: 5000000
+                      status: "open"
+                      allowPartial: true
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: false
+                  error: "Failed to fetch offers"
+  /api/otc/offers/my:
+    get:
+      tags:
+        - P2P marketplace
+      summary: Get My P2P Offers
+      description: "Fetch all P2P offers created by the specified wallet address"
+      parameters:
+        - name: walletAddress
+          in: query
+          required: true
+          schema:
+            type: string
+          description: User's wallet address (required)
+          example: addr1qx2u9j732u24pzdgr7kv5s3mra5hldzgq6spgjclp02urdfsl0pf0vqz942h3gru5cudxjajqme6h886gpg5jdftzcyqqkjcj3
+        - name: x-api-key
+          in: header
+          schema:
+            type: string
+          example: 7c6095cf2eeeac500667241439ab5c3eac2488b9962526ca7f543d76b56a7b2
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: true
+                  data:
+                    - id: "offer_123abc"
+                      offerAsset:
+                        policyId: "279c909f348e533da5808898f87f9a14bb2c3dfbbacccd631d927a3f"
+                        nameHex: "534e454b"
+                        ticker: "SNEK"
+                      offerAmount: 1000
+                      requestAsset: "lovelace"
+                      requestAmount: 5000000
+                      status: "open"
+                      allowPartial: true
+        '400':
+          description: Bad request - Missing wallet address
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: false
+                  error: "Wallet address is required"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: false
+                  error: "Failed to fetch my offers"
+  /api/otc/offers/cancel:
+    post:
+      tags:
+        - P2P marketplace
+      summary: Cancel P2P Offer
+      description: "Cancel an existing P2P offer owned by the wallet"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - walletAddress
+                - offerId
+              properties:
+                walletAddress:
+                  type: string
+                  description: User's wallet address (required)
+                offerId:
+                  type: string
+                  description: ID of the offer to cancel (required)
+              example:
+                walletAddress: "addr1qx2u9j732u24pzdgr7kv5s3mra5hldzgq6spgjclp02urdfsl0pf0vqz942h3gru5cudxjajqme6h886gpg5jdftzcyqqkjcj3"
+                offerId: "offer_123abc"
+      parameters:
+        - name: content-type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: x-api-key
+          in: header
+          schema:
+            type: string
+          example: 7c6095cf2eeeac500667241439ab5c3eac2488b9962526ca7f543d76b56a7b2
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: true
+                  data:
+                    txCbor: "84a500d90102..."
+        '400':
+          description: Bad request - Missing required fields
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: false
+                  error: "Wallet address is required"
+        '404':
+          description: Offer not found or not owned
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: false
+                  error: "Offer not found or not owned by you"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: false
+                  error: "Failed to cancel offer"
