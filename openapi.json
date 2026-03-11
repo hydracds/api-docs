@@ -558,3 +558,331 @@ paths:
                 example:
                   success: false
                   error: "Failed to cancel offer"
+  /api/dca/orders/create:
+    post:
+      tags:
+        - DCA (Dollar Cost Averaging)
+      summary: Create DCA Order
+      description: "Create a new DCA (Dollar Cost Averaging) order that automatically executes recurring swaps at specified intervals. Orders are executed by keeper bots when the next execution time is reached."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - walletAddress
+                - tokenIn
+                - tokenOut
+                - perOrderAmount
+                - numOrders
+              properties:
+                walletAddress:
+                  type: string
+                  description: User's wallet address (required)
+                tokenIn:
+                  oneOf:
+                    - type: string
+                      description: "'lovelace' for ADA"
+                    - type: object
+                      description: Token asset details
+                      properties:
+                        policyId:
+                          type: string
+                        assetNameHex:
+                          type: string
+                        decimals:
+                          type: integer
+                        ticker:
+                          type: string
+                tokenOut:
+                  oneOf:
+                    - type: string
+                      description: "'lovelace' for ADA"
+                    - type: object
+                      description: Token asset details
+                      properties:
+                        policyId:
+                          type: string
+                        assetNameHex:
+                          type: string
+                        decimals:
+                          type: integer
+                        ticker:
+                          type: string
+                perOrderAmount:
+                  type: number
+                  description: Amount to swap per order (in token units, e.g. 5 = 5 ADA)
+                numOrders:
+                  type: integer
+                  description: Total number of orders to execute
+                intervalMs:
+                  type: integer
+                  description: Interval between orders in milliseconds (default 3600000 = 1 hour)
+                  default: 3600000
+                slippageBps:
+                  type: integer
+                  description: Slippage tolerance in basis points (default 50 = 0.5%)
+                  default: 50
+                minPrice:
+                  type: object
+                  description: Minimum price constraint as a rational number (optional)
+                  properties:
+                    numerator:
+                      type: integer
+                    denominator:
+                      type: integer
+                maxPrice:
+                  type: object
+                  description: Maximum price constraint as a rational number (optional)
+                  properties:
+                    numerator:
+                      type: integer
+                    denominator:
+                      type: integer
+                keeperFee:
+                  type: integer
+                  description: Keeper fee per order in lovelace (default 500000)
+                  default: 500000
+                tokenInDecimals:
+                  type: integer
+                  description: Decimals for tokenIn (default 6 for ADA)
+                  default: 6
+              example:
+                walletAddress: "addr1qx2u9j732u24pzdgr7kv5s3mra5hldzgq6spgjclp02urdfsl0pf0vqz942h3gru5cudxjajqme6h886gpg5jdftzcyqqkjcj3"
+                tokenIn: "lovelace"
+                tokenOut:
+                  policyId: "279c909f348e533da5808898f87f9a14bb2c3dfbbacccd631d927a3f"
+                  assetNameHex: "534e454b"
+                  decimals: 0
+                  ticker: "SNEK"
+                perOrderAmount: 5
+                numOrders: 3
+                intervalMs: 3600000
+                slippageBps: 50
+                keeperFee: 500000
+                tokenInDecimals: 6
+      parameters:
+        - name: content-type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: x-api-key
+          in: header
+          schema:
+            type: string
+          example: 7c6095cf2eeeac500667241439ab5c3eac2488b9962526ca7f543d76b56a7b2
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: true
+                  txCbor: "84a500d90102..."
+        '400':
+          description: Bad request - Missing required fields
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: false
+                  error: "Wallet address is required"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: false
+                  error: "Failed to create DCA order"
+  /api/dca/orders/cancel:
+    post:
+      tags:
+        - DCA (Dollar Cost Averaging)
+      summary: Cancel DCA Order
+      description: "Cancel an existing DCA order. Only the owner of the order can cancel it. All remaining locked assets (unused tokenIn, keeper fees, batcher fees) are returned to the owner's wallet."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - walletAddress
+                - orderId
+              properties:
+                walletAddress:
+                  type: string
+                  description: User's wallet address (required)
+                orderId:
+                  type: string
+                  description: "Order ID in format {txHash}#{outputIndex} (required)"
+              example:
+                walletAddress: "addr1qx2u9j732u24pzdgr7kv5s3mra5hldzgq6spgjclp02urdfsl0pf0vqz942h3gru5cudxjajqme6h886gpg5jdftzcyqqkjcj3"
+                orderId: "3f39bd440320357458d68392bfbd2320bf4524212f0c4ee4d87923f0af1c3f83#0"
+      parameters:
+        - name: content-type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: x-api-key
+          in: header
+          schema:
+            type: string
+          example: 7c6095cf2eeeac500667241439ab5c3eac2488b9962526ca7f543d76b56a7b2
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: true
+                  txCbor: "84a500d90102..."
+        '400':
+          description: Bad request - Missing required fields
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: false
+                  error: "Wallet address is required"
+        '404':
+          description: Order not found or not owned
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: false
+                  error: "Order not found or not owned by you"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: false
+                  error: "Failed to cancel DCA order"
+  /api/dca/orders:
+    get:
+      tags:
+        - DCA (Dollar Cost Averaging)
+      summary: Get My DCA Orders
+      description: "Fetch all DCA orders created by the specified wallet address"
+      parameters:
+        - name: walletAddress
+          in: query
+          required: true
+          schema:
+            type: string
+          description: User's wallet address (required)
+          example: addr1qx2u9j732u24pzdgr7kv5s3mra5hldzgq6spgjclp02urdfsl0pf0vqz942h3gru5cudxjajqme6h886gpg5jdftzcyqqkjcj3
+        - name: x-api-key
+          in: header
+          schema:
+            type: string
+          example: 7c6095cf2eeeac500667241439ab5c3eac2488b9962526ca7f543d76b56a7b2
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: true
+                  orders:
+                    - id: "3f39bd440320357458d68392bfbd2320bf4524212f0c4ee4d87923f0af1c3f83#0"
+                      txHash: "3f39bd440320357458d68392bfbd2320bf4524212f0c4ee4d87923f0af1c3f83"
+                      outputIndex: 0
+                      ownerAddress: "addr1qx2u9j732u24pzdgr7kv5s3mra5hldzgq6spgjclp02urdfsl0pf0vqz942h3gru5cudxjajqme6h886gpg5jdftzcyqqkjcj3"
+                      tokenInUnit: "lovelace"
+                      tokenOutUnit: "279c909f348e533da5808898f87f9a14bb2c3dfbbacccd631d927a3f.534e454b"
+                      tokenInName: "ADA"
+                      tokenOutName: "SNEK"
+                      perOrderAmount: 5
+                      remainingOrders: 2
+                      totalOrders: 3
+                      ordersExecuted: 1
+                      intervalMs: 3600000
+                      nextExecutionTime: 1710000000000
+                      slippageBps: 50
+                      keeperFee: 500000
+                      status: "ACTIVE"
+                      isMine: true
+        '400':
+          description: Bad request - Missing wallet address
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: false
+                  error: "Wallet address is required"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: false
+                  error: "Failed to fetch DCA orders"
+  /api/dca/orders/all:
+    get:
+      tags:
+        - DCA (Dollar Cost Averaging)
+      summary: Get All Active DCA Orders
+      description: "Fetch all active DCA orders on the platform"
+      parameters:
+        - name: x-api-key
+          in: header
+          schema:
+            type: string
+          example: 7c6095cf2eeeac500667241439ab5c3eac2488b9962526ca7f543d76b56a7b2
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: true
+                  orders:
+                    - id: "3f39bd440320357458d68392bfbd2320bf4524212f0c4ee4d87923f0af1c3f83#0"
+                      txHash: "3f39bd440320357458d68392bfbd2320bf4524212f0c4ee4d87923f0af1c3f83"
+                      outputIndex: 0
+                      ownerAddress: "addr1qx2u9j732u24pzdgr7kv5s3mra5hldzgq6spgjclp02urdfsl0pf0vqz942h3gru5cudxjajqme6h886gpg5jdftzcyqqkjcj3"
+                      tokenInUnit: "lovelace"
+                      tokenOutUnit: "279c909f348e533da5808898f87f9a14bb2c3dfbbacccd631d927a3f.534e454b"
+                      tokenInName: "ADA"
+                      tokenOutName: "SNEK"
+                      perOrderAmount: 5
+                      remainingOrders: 2
+                      totalOrders: 3
+                      ordersExecuted: 1
+                      intervalMs: 3600000
+                      nextExecutionTime: 1710000000000
+                      slippageBps: 50
+                      keeperFee: 500000
+                      status: "ACTIVE"
+                      isMine: false
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: false
+                  error: "Failed to fetch DCA orders"
